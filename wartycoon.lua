@@ -4,7 +4,7 @@ local valid = false
 
 -- 1. ОБНОВИ ЭТУ БЕЛЫЙ СПИСОК СВОИМИ ДАННЫМИ:
 local whitelist = {
-    {HWID = '884D-908B-4482-ACDB-2E4A3C1476CF', IP = "fsddssdggfd"},
+    {HWID = 'C017884D-908B-4482-ACDB-2E4A3C1476CF', IP = "fsddssdggfd"},
     -- Добавь свои HWID сюда
     -- {HWID = 'ЕЩЕ_ОДИН_HWID', IP = "ЕЩЕ_ОДИН_НИК"},
 }
