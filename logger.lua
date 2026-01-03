@@ -5,8 +5,7 @@ local valid = false
 -- 1. ОБНОВИ ЭТУ БЕЛЫЙ СПИСОК СВОИМИ ДАННЫМИ:
 local whitelist = {
     {HWID = 'C017884D-908B-4482-ACDB-2E4A3C1476CF', IP = "mybadbro1337"},
-    -- Добавь свои HWID сюда
-    -- {HWID = 'ЕЩЕ_ОДИН_HWID', IP = "ЕЩЕ_ОДИН_НИК"},
+    {HWID = '415F92CD-908A-464C-9123-9CFD3ECE330E', IP = "fuflonski"}
 }
 
 if game:IsLoaded() then
