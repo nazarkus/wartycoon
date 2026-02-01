@@ -6,6 +6,7 @@ local valid = false
 local whitelist = {
     {HWID = 'C017884D-908B-4482-ACDB-2E4A3C1476CF', IP = "mybadbro1337"},
     {HWID = '415F92CD-908A-464C-9123-9CFD3ECE330E', IP = "fuflonski"}
+    {HWID = 'ADC447EF-9C8A-4A4E-966C-220FE03C8F4F', IP = "easywinbrother1337"}
 }
 
 if game:IsLoaded() then
