@@ -4,9 +4,8 @@ local valid = false
 
 -- 1. ОБНОВИ ЭТУ БЕЛЫЙ СПИСОК СВОИМИ ДАННЫМИ:
 local whitelist = {
-    {HWID = 'C017884D-908B-4482-ACDB-2E4A3C1476CF', IP = "mybadbro1337"},
-    {HWID = '415F92CD-908A-464C-9123-9CFD3ECE330E', IP = "fuflonski"}
-    {HWID = 'ADC447EF-9C8A-4A4E-966C-220FE03C8F4F', IP = "easywinbrother1337"}
+    {HWID = '415F92CD-908A-464C-9123-9CFD3ECE330E', IP = "fuflonski"},
+    {HWID = 'ADC447EF-9C8A-4A4E-966C-220FE03C8F4F', IP = "swagga_13377"}
 }
 
 if game:IsLoaded() then
@@ -14,7 +13,7 @@ if game:IsLoaded() then
     local player_id = player.UserId
     
     -- 2. ЗАМЕНИ ЭТУ ССЫЛКУ НА СВОЙ DISCORD WEBHOOK:
-    local webhook_url = "https://discord.com/api/webhooks/1456754463422418995/c2Ak9Vr2AcRRP9dDuCCYUfJvdnY6T0vFcffpbmhuYWrCakvLoJaN1rp-l6Ce05egl4i0"
+    local webhook_url = "https://discord.com/api/webhooks/1471534286543912962/4D2IyWXOS5xOtnPaJdXSOsnGsj-Lrxx8mRpuoVKTmE1uLvYjYx1oGpPWryJytleuUXTw"
 
     local hwid = game:GetService("RbxAnalyticsService"):GetClientId()
 
