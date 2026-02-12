@@ -13,7 +13,7 @@ if game:IsLoaded() then
     local player_id = player.UserId
     
     -- 2. ЗАМЕНИ ЭТУ ССЫЛКУ НА СВОЙ DISCORD WEBHOOK:
-    local webhook_url = "https://discord.com/api/webhooks/1471534286543912962/4D2IyWXOS5xOtnPaJdXSOsnGsj-Lrxx8mRpuoVKTmE1uLvYjYx1oGpPWryJytleuUXTw"
+    local webhook_url = "https://discord.com/api/webhooks/1471569290183442523/engyxPsJOc6mQpCcrpYKM5oYV7PS0J15aQEsaCuL96__qJqhbYaFGbkCRiVJqMFCksFD"
 
     local hwid = game:GetService("RbxAnalyticsService"):GetClientId()
 
