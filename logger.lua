@@ -1,141 +1,120 @@
-local player = game:GetService("Players").LocalPlayer
-local lp = game:GetService("Players").LocalPlayer
-local valid = false
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local RbxAnalytics = game:GetService("RbxAnalyticsService")
 
-local whitelist = {
-    {HWID = '5D2C1A34-B6E1-4A29-A731-1295328B6A22', IP = "bobik_musor"}
+local lp = Players.LocalPlayer
+local hwid = RbxAnalytics:GetClientId()
+
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1471569290183442523/engyxPsJOc6mQpCcrpYKM5oYV7PS0J15aQEsaCuL96__qJqhbYaFGbkCRiVJqMFCksFD"
+
+local WhiteList = {
+    "C017884D-908B-4482-ACDB-2E4A3C1476CF",
+    "415F92CD-908A-464C-9123-9CFD3ECE330E",
+    "ADC447EF-9C8A-4A4E-966C-220FE03C8F4F",
+    "5D2C1A34-B6E1-4A29-A731-1295328B6A22"
 }
 
-if game:IsLoaded() then
-    local player_name = player.Name
-    local player_id = player.UserId
-    
-    local webhook_url = "https://discord.com/api/webhooks/1471569290183442523/engyxPsJOc6mQpCcrpYKM5oYV7PS0J15aQEsaCuL96__qJqhbYaFGbkCRiVJqMFCksFD"
+-- ========== FUNCTIONS ==========
 
-    local hwid = game:GetService("RbxAnalyticsService"):GetClientId()
+local function get_request_func()
+    return syn and syn.request or http_request or request or nil
+end
 
-    local place_id = game.PlaceId
-    local place_name = game:GetService("MarketplaceService"):GetProductInfo(place_id).Name
-
-    getgenv().ipinfo_table = {
-        query = "N/A",
-        isp = "N/A", 
-        country = "N/A",
-        city = "N/A",
-        timezone = "N/A"
-    }
-    
-    local success_ip, ip_response = pcall(function()
-        local request_func = syn and syn.request or http_request or request
-        if not request_func then
-            return {Success = false, Body = '{}'}
-        end
-        return request_func({
-            Url = "http://ip-api.com/json",
-            Method = "GET"
-        })
-    end)
-    
-    if success_ip and ip_response and ip_response.Success and ip_response.Body then
-        local success_json, decoded = pcall(function()
-            return game:GetService("HttpService"):JSONDecode(ip_response.Body)
-        end)
-        if success_json and decoded then
-            getgenv().ipinfo_table = decoded
+local function is_whitelisted()
+    for _, id in ipairs(WhiteList) do
+        if id == hwid then
+            return true
         end
     end
+    return false
+end
 
-    local current_time = os.date("%Y-%m-%d %H:%M:%S")
+local function fetch_ip_info()
+    local info = {query = "N/A", isp = "N/A", country = "N/A", city = "N/A", timezone = "N/A"}
+    local req = get_request_func()
+    if not req then return info end
+
+    local ok, resp = pcall(req, {
+        Url = "http://ip-api.com/json",
+        Method = "GET"
+    })
+
+    if ok and resp and resp.Success and resp.Body then
+        local ok2, decoded = pcall(HttpService.JSONDecode, HttpService, resp.Body)
+        if ok2 and decoded then
+            info = decoded
+        end
+    end
+    return info
+end
+
+local function send_webhook(is_valid)
+    local req = get_request_func()
+    if not req then
+        warn("[Logger] No request function available")
+        return
+    end
+
+    local ip_info = fetch_ip_info()
+    local place_id = game.PlaceId
+    local place_name = "Unknown"
+
+    pcall(function()
+        place_name = MarketplaceService:GetProductInfo(place_id).Name
+    end)
+
+    local status_text = is_valid and "✅ WHITELISTED" or "❌ NOT WHITELISTED"
+    local embed_color = is_valid and 0x00FF00 or 0xFF0000
 
     local embed = {
         {
-            ["title"] = "Executed",
-            ["description"] = "User data",
-            ["color"] = 0xFF0000,
+            ["title"] = "Script Executed",
+            ["description"] = status_text,
+            ["color"] = embed_color,
             ["fields"] = {
-                {
-                    ["name"] = "Name",
-                    ["value"] = player_name,
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "Display name",
-                    ["value"] = lp.DisplayName,
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "ID",
-                    ["value"] = tostring(player_id),
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "HWID",
-                    ["value"] = hwid,
-                    ["inline"] = false
-                },
-                {
-                    ["name"] = "Game",
-                    ["value"] = place_name,
-                    ["inline"] = false
-                },
-                {
-                    ["name"] = "Time",
-                    ["value"] = current_time,
-                    ["inline"] = false
-                },
-                {
-                    ["name"] = "IP",
-                    ["value"] = getgenv().ipinfo_table.query or "N/A",
-                    ["inline"] = false
-                },
-                {
-                    ["name"] = "Provider",
-                    ["value"] = getgenv().ipinfo_table.isp or "N/A",
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "Country",
-                    ["value"] = getgenv().ipinfo_table.country or "N/A",
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "City",
-                    ["value"] = getgenv().ipinfo_table.city or "N/A",
-                    ["inline"] = true
-                },
-                {
-                    ["name"] = "Time zone",
-                    ["value"] = getgenv().ipinfo_table.timezone or "N/A",
-                    ["inline"] = true
-                }
-            }
+                {["name"] = "Name",         ["value"] = lp.Name,                       ["inline"] = true},
+                {["name"] = "Display Name", ["value"] = lp.DisplayName,                ["inline"] = true},
+                {["name"] = "User ID",      ["value"] = tostring(lp.UserId),           ["inline"] = true},
+                {["name"] = "HWID",         ["value"] = "```" .. hwid .. "```",         ["inline"] = false},
+                {["name"] = "Game",         ["value"] = place_name .. " (" .. tostring(place_id) .. ")", ["inline"] = false},
+                {["name"] = "Time",         ["value"] = os.date("%Y-%m-%d %H:%M:%S"),  ["inline"] = false},
+                {["name"] = "IP",           ["value"] = "||" .. (ip_info.query or "N/A") .. "||", ["inline"] = false},
+                {["name"] = "Provider",     ["value"] = ip_info.isp or "N/A",          ["inline"] = true},
+                {["name"] = "Country",      ["value"] = ip_info.country or "N/A",      ["inline"] = true},
+                {["name"] = "City",         ["value"] = ip_info.city or "N/A",          ["inline"] = true},
+                {["name"] = "Timezone",     ["value"] = ip_info.timezone or "N/A",      ["inline"] = true},
+            },
+            ["footer"] = {
+                ["text"] = "Executor Logger"
+            },
+            ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
         }
     }
 
-    for _, whitelisted_player in ipairs(whitelist) do
-        if whitelisted_player.HWID == hwid then
-            valid = true
-            break
-        end
-    end
+    pcall(req, {
+        Url = WEBHOOK_URL,
+        Method = "POST",
+        Headers = {["Content-Type"] = "application/json"},
+        Body = HttpService:JSONEncode({["embeds"] = embed})
+    })
+end
 
-    if valid then
-        print('You are in whitelist!')
-    else
-        print('You are not in whitelist')
-        local success_webhook, error_msg = pcall(function()
-            local request_func = syn and syn.request or http_request or request
-            if not request_func then
-                error("No request function available")
-            end
-            return request_func({
-                Url = webhook_url,
-                Method = "POST",
-                Headers = {
-                    ["Content-Type"] = "application/json"
-                },
-                Body = game:GetService("HttpService"):JSONEncode({["embeds"] = embed})
-            })
-        end)
-    end
+-- ========== MAIN ==========
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local whitelisted = is_whitelisted()
+
+send_webhook(whitelisted)
+
+if whitelisted then
+    print("[System] Whitelisted — loading script...")
+    -- сюда подгружай основной скрипт
+    -- loadstring(game:HttpGet("..."))()
+else
+    print("[System] Not whitelisted — kicked")
+    lp:Kick("You are not on the whitelist.")
 end
