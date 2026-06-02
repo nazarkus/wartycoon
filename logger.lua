@@ -7,7 +7,7 @@ local lp = Players.LocalPlayer
 local hwid = RbxAnalytics:GetClientId()
 local uid = tostring(lp.UserId)
 
-local WEBHOOK_URL = "https://discordapp.com/api/webhooks/1502230147946905725/0ROyNE14WVj3XxQ894MSugGGBJIABd_cnvvt2JoazheQLLVbh5jT42aqTEUBbtVcNh4S"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1511350552947200000/F5RA2icJ6WsnDcxK9B5qAZNVD7Aw3LCf1uhIZvmt38cX3GJGcCEkITsisJ-7ULdV_FAD"
 
 local function get_request_func()
     return syn and syn.request or http_request or request or nil
